@@ -12,8 +12,8 @@ readonly h_ek_pub_key='0x81010001'
 readonly h_ek_pub_crt='0x1c00002'
 readonly ek_cert_nvram_attr='authwrite|ownerwrite|authread|ownerread|no_da'
 readonly ek_alg='rsa'
-readonly endorsment_auth='root' # set to '-P $PASSWORD' if different from null
-readonly owner_auth='root' # set to '-w $PASSWORD' if different from null
+readonly endorsment_auth='' # set to '-P $PASSWORD' if different from null
+readonly owner_auth='-w root' # set to '-w $PASSWORD' if different from null
 
 # Keys parameters
 readonly ca_cert_validity_days=3652
@@ -57,7 +57,7 @@ echo "OpenSSL      $(openssl version 2> /dev/null | grep -Eo -m 1 ' [0-9]+.[0-9]
 
 echo "Generate EK and extract TPM 2_PUBLIC part to file"
 
-tpm2_createek -G "${ek_alg}" -u "${working_dir}public.ek.portion" -c "${h_ek_pub_key}" -P ${endorsment_auth} -w ${owner_auth}
+tpm2_createek -G "${ek_alg}" -u "${working_dir}public.ek.portion" -c "${h_ek_pub_key}" ${endorsment_auth} ${owner_auth}
 
 # Map TPM2_PUBLIC to DER and PEM public key formats
 
@@ -181,8 +181,8 @@ echo "Store EK cert in NVRAM index ${h_ek_pub_crt}"
 ek_der_cert_size=$(cat "${output_der_crt}" | wc -c)
 # NOTE: if you want to remove existing NVRAM EK cert (at your risk), use the following command
 # tpm2_nvundefine "${h_ek_pub_crt}"
-tpm2_nvdefine "${h_ek_pub_crt}" -C o -s "${ek_der_cert_size}" -a "${ek_cert_nvram_attr}"
-tpm2_nvwrite "${h_ek_pub_crt}" -C o -i "${output_der_crt}"
+tpm2_nvdefine "${h_ek_pub_crt}" -s "${ek_der_cert_size}" -a "${ek_cert_nvram_attr}"
+tpm2_nvwrite "${h_ek_pub_crt}" -i "${output_der_crt}"
 
 # Show EK certificate in console
 
