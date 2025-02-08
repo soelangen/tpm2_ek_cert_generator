@@ -181,8 +181,8 @@ echo "Store EK cert in NVRAM index ${h_ek_pub_crt}"
 ek_der_cert_size=$(cat "${output_der_crt}" | wc -c)
 # NOTE: if you want to remove existing NVRAM EK cert (at your risk), use the following command
 # tpm2_nvundefine "${h_ek_pub_crt}"
-tpm2_nvdefine "${h_ek_pub_crt}" -s "${ek_der_cert_size}" -a "${ek_cert_nvram_attr}"
-tpm2_nvwrite "${h_ek_pub_crt}" -i "${output_der_crt}"
+tpm2_nvdefine "${h_ek_pub_crt}" -s "${ek_der_cert_size}" -a "${ek_cert_nvram_attr}" -P "root"
+tpm2_nvwrite "${h_ek_pub_crt}" -i "${output_der_crt}" -P "root"
 
 # Show EK certificate in console
 
